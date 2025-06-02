@@ -56,10 +56,18 @@ const EvaluateJavaScriptSchema = z.object({
   script: z.string()
 });
 
+const GetConsoleLogsSchema = z.object({
+  level: z.enum(['log', 'info', 'warn', 'error', 'debug']).optional(),
+  clear: z.boolean().default(false)
+});
+
 // Global browser state
 let currentBrowser: Browser | null = null;
 let currentContext: BrowserContext | null = null;
 let currentPage: Page | null = null;
+
+// Console logs storage
+let consoleLogs: Array<{level: string, message: string, timestamp: Date}> = [];
 
 class BrowserAutomationServer {
   private server: Server;
@@ -267,6 +275,25 @@ class BrowserAutomationServer {
             }
           },
           {
+            name: 'get_console_logs',
+            description: 'Get console logs from the browser',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                level: {
+                  type: 'string',
+                  enum: ['log', 'info', 'warn', 'error', 'debug'],
+                  description: 'Filter logs by level'
+                },
+                clear: {
+                  type: 'boolean',
+                  default: false,
+                  description: 'Clear console logs after retrieving'
+                }
+              }
+            }
+          },
+          {
             name: 'get_page_info',
             description: 'Get information about the current page',
             inputSchema: {
@@ -299,6 +326,9 @@ class BrowserAutomationServer {
               await currentBrowser.close();
             }
 
+            // Clear console logs
+            consoleLogs = [];
+
             // Launch new browser
             const browserType = params.browser === 'firefox' ? firefox : 
                               params.browser === 'webkit' ? webkit : chromium;
@@ -315,6 +345,15 @@ class BrowserAutomationServer {
             });
             
             currentPage = await currentContext.newPage();
+
+            // Set up console event listener
+            currentPage.on('console', (msg) => {
+              consoleLogs.push({
+                level: msg.type(),
+                message: msg.text(),
+                timestamp: new Date()
+              });
+            });
 
             return {
               content: [
@@ -464,6 +503,37 @@ class BrowserAutomationServer {
                 {
                   type: 'text',
                   text: `JavaScript result: ${JSON.stringify(result, null, 2)}`
+                }
+              ]
+            };
+          }
+
+          case 'get_console_logs': {
+            if (!currentPage) {
+              throw new Error('No browser page available. Launch a browser first.');
+            }
+
+            const params = GetConsoleLogsSchema.parse(args);
+            
+            // Filter logs by level if specified
+            const filteredLogs = params.level 
+              ? consoleLogs.filter(log => log.level === params.level)
+              : consoleLogs;
+
+            // Clear logs if requested
+            if (params.clear) {
+              consoleLogs = [];
+            }
+
+            const logText = filteredLogs.length > 0 
+              ? filteredLogs.map(log => `[${log.timestamp.toISOString()}] ${log.level.toUpperCase()}: ${log.message}`).join('\n')
+              : '(no console logs)';
+
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `Console Logs:\n${logText}`
                 }
               ]
             };

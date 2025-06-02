@@ -73,8 +73,9 @@ Once configured, Chat.fans agents and GitHub Copilot Chat can use browser automa
 6. **get_element_text** - Extract text from elements
 7. **wait_for_element** - Wait for elements to appear/disappear
 8. **evaluate_javascript** - Run custom JavaScript
-9. **get_page_info** - Get current page information
-10. **close_browser** - Close the browser instance
+9. **get_console_logs** - Get browser console logs (log, info, warn, error, debug)
+10. **get_page_info** - Get current page information
+11. **close_browser** - Close the browser instance
 
 ## Example: Web Application Testing
 
@@ -95,8 +96,14 @@ await click_element({ selector: "button[type='submit']" });
 // Wait for successful login
 await wait_for_element({ selector: ".dashboard", timeout: 10000 });
 
+// Check for any console errors during login
+await get_console_logs({ level: "error" });
+
 // Take screenshot of dashboard
 await screenshot({ fullPage: true, path: "dashboard.png" });
+
+// Get all console logs for debugging
+await get_console_logs();
 ```
 
 ## Development
