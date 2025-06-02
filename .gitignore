@@ -1,0 +1,18 @@
+node_modules/
+dist/
+build/
+PROJECT-COMPLETE.md
+
+# Compiled JavaScript files in src (TypeScript should be the source)
+src/*.js
+src/*.js.map
+
+# Screenshots from tests
+*.png
+
+# Log files
+*.log
+
+# Environment files
+.env
+.env.local

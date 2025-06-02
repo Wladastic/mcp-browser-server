@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "browser-automation": {
+      "command": "node",
+      "args": ["./build/index.js"],
+      "env": {}
+    }
+  }
+}

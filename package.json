@@ -1,0 +1,50 @@
+{
+  "name": "mcp-browser-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "mcp-browser-server": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc && node build/index.js",
+    "start": "node build/index.js",
+    "test": "node simple-test.mjs",
+    "test:demo": "node demo-test.mjs",
+    "test:full": "npm run test && npm run test:demo",
+    "clean": "rm -rf build *.png",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "browser",
+    "automation",
+    "playwright",
+    "testing"
+  ],
+  "author": "Wladislav Cugunov <github@wlacu.com> (https://github.com/Wladastic)",
+  "license": "SEE LICENSE IN LICENSE",
+  "description": "Model Context Protocol server for browser automation using Playwright",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wladastic/mcp-browser-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Wladastic/mcp-browser-server/issues"
+  },
+  "homepage": "https://github.com/Wladastic/mcp-browser-server#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/Wladastic"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "playwright": "^1.52.0",
+    "zod": "^3.25.48"
+  }
+}
