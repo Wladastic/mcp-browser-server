@@ -74,8 +74,9 @@ Once configured, Chat.fans agents and GitHub Copilot Chat can use browser automa
 7. **wait_for_element** - Wait for elements to appear/disappear
 8. **evaluate_javascript** - Run custom JavaScript
 9. **get_console_logs** - Get browser console logs (log, info, warn, error, debug)
-10. **get_page_info** - Get current page information
-11. **close_browser** - Close the browser instance
+10. **analyze_screenshot** - AI-powered screenshot analysis using Gemma3 (requires Ollama)
+11. **get_page_info** - Get current page information
+12. **close_browser** - Close the browser instance
 
 ## Example: Web Application Testing
 
@@ -105,6 +106,64 @@ await screenshot({ fullPage: true, path: "dashboard.png" });
 // Get all console logs for debugging
 await get_console_logs();
 ```
+
+## AI-Powered Screenshot Analysis
+
+The `analyze_screenshot` tool provides AI-powered analysis of web pages using local Gemma3 models via Ollama. This feature can describe what's visible on a page, analyze page structure, and look for specific elements based on context.
+
+### Prerequisites
+
+1. **Install Ollama**: Download from [ollama.ai](https://ollama.ai)
+2. **Install Gemma3 model**:
+   ```bash
+   ollama pull gemma3:4b
+   ```
+3. **Start Ollama service**:
+   ```bash
+   ollama serve
+   ```
+
+### Usage Examples
+
+#### Basic Screenshot Analysis
+```javascript
+// Take and analyze a screenshot with AI
+await analyze_screenshot({ 
+  fullPage: true,
+  model: "gemma3:4b"
+});
+```
+
+#### Detailed Structural Analysis
+```javascript
+// Get detailed analysis of page structure
+await analyze_screenshot({ 
+  detailed: true,
+  pretext: "Focus on navigation elements and form fields"
+});
+```
+
+#### Context-Specific Analysis
+```javascript
+// Look for specific elements or issues
+await analyze_screenshot({ 
+  pretext: "Check if there are any error messages or broken layouts",
+  path: "error-check.png"
+});
+```
+
+### Parameters
+
+- **fullPage** (boolean): Capture entire scrollable page vs viewport only
+- **path** (string): Optional file path to save the screenshot
+- **pretext** (string): Additional context or specific instructions for the AI
+- **model** (string): AI model to use (default: "gemma3:4b")
+- **detailed** (boolean): Request detailed structural analysis
+
+### Supported Models
+
+- `gemma3:4b` (default, good balance of speed and quality)
+- Any other vision-capable model available in your Ollama installation
 
 ## Development
 

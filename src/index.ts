@@ -9,6 +9,8 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { chromium, firefox, webkit, Browser, Page, BrowserContext } from 'playwright';
 import { z } from 'zod';
+import { Ollama } from 'ollama';
+import * as fs from 'fs';
 
 // Define our tool schemas using Zod
 const LaunchBrowserSchema = z.object({
@@ -16,7 +18,7 @@ const LaunchBrowserSchema = z.object({
   headless: z.boolean().default(true),
   viewport: z.object({
     width: z.number().default(1280),
-    height: z.number().default(720)
+    height: z.number().default(1024)
   }).optional()
 });
 
@@ -59,6 +61,14 @@ const EvaluateJavaScriptSchema = z.object({
 const GetConsoleLogsSchema = z.object({
   level: z.enum(['log', 'info', 'warn', 'error', 'debug']).optional(),
   clear: z.boolean().default(false)
+});
+
+const AnalyzeScreenshotSchema = z.object({
+  fullPage: z.boolean().default(false),
+  path: z.string().optional(),
+  pretext: z.string().optional(),
+  model: z.string().default('gemma3:4b'),
+  detailed: z.boolean().default(false)
 });
 
 // Global browser state
@@ -307,6 +317,38 @@ class BrowserAutomationServer {
             inputSchema: {
               type: 'object',
               properties: {}
+            }
+          },
+          {
+            name: 'analyze_screenshot',
+            description: 'Take a screenshot and analyze it with AI (Gemma3) to describe what is visible on the page',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                fullPage: {
+                  type: 'boolean',
+                  default: false,
+                  description: 'Capture full scrollable page'
+                },
+                path: {
+                  type: 'string',
+                  description: 'Path to save screenshot (optional)'
+                },
+                pretext: {
+                  type: 'string',
+                  description: 'Optional context or specific instructions for what to look for in the analysis'
+                },
+                model: {
+                  type: 'string',
+                  default: 'gemma3:4b',
+                  description: 'AI model to use for analysis (default: gemma3:4b)'
+                },
+                detailed: {
+                  type: 'boolean',
+                  default: false,
+                  description: 'Provide detailed structural analysis of the page'
+                }
+              }
             }
           }
         ],
@@ -582,6 +624,86 @@ Viewport: ${viewport?.width}x${viewport?.height}`
                   {
                     type: 'text',
                     text: 'No browser instance to close'
+                  }
+                ]
+              };
+            }
+          }
+
+          case 'analyze_screenshot': {
+            if (!currentPage) {
+              throw new Error('No browser page available. Launch a browser first.');
+            }
+
+            const params = AnalyzeScreenshotSchema.parse(args);
+            
+            // Take screenshot
+            const screenshotPath = params.path || `screenshot-${Date.now()}.png`;
+            const screenshotBuffer = await currentPage.screenshot({ 
+              fullPage: params.fullPage,
+              path: screenshotPath
+            });
+
+            try {
+              // Initialize Ollama client
+              const ollama = new Ollama({ host: 'http://localhost:11434' });
+
+              // Convert screenshot to base64
+              const base64Image = screenshotBuffer.toString('base64');
+
+              // Prepare the prompt
+              let prompt = 'Analyze this website screenshot and describe exactly what you see. ';
+              
+              if (params.detailed) {
+                prompt += 'Provide a detailed structural analysis including layout, navigation elements, content sections, forms, buttons, and any interactive elements. ';
+              } else {
+                prompt += 'Focus on the main content and key elements visible on the page. ';
+              }
+
+              if (params.pretext) {
+                prompt += `Additional context/instructions: ${params.pretext}. `;
+              }
+
+              prompt += 'Be specific about colors, text content, images, and the overall design and functionality of the page.';
+
+              // Make AI request
+              const response = await ollama.generate({
+                model: params.model,
+                prompt: prompt,
+                images: [base64Image],
+                stream: false
+              });
+
+              return {
+                content: [
+                  {
+                    type: 'text',
+                    text: `AI Analysis of Screenshot (${screenshotPath}):
+
+${response.response}
+
+Screenshot saved to: ${screenshotPath}
+Model used: ${params.model}
+Analysis type: ${params.detailed ? 'Detailed structural analysis' : 'General description'}`
+                  }
+                ]
+              };
+
+            } catch (aiError) {
+              // If AI analysis fails, still return screenshot info
+              const fallbackMessage = aiError instanceof Error ? aiError.message : String(aiError);
+              
+              return {
+                content: [
+                  {
+                    type: 'text',
+                    text: `Screenshot taken and saved to: ${screenshotPath}
+
+AI Analysis Error: ${fallbackMessage}
+
+Note: Make sure Ollama is running locally with the ${params.model} model installed.
+You can install it with: ollama pull ${params.model}
+And start Ollama with: ollama serve`
                   }
                 ]
               };
