@@ -16,6 +16,7 @@ Perfect for web automation, testing, and debugging workflows with AI assistants 
 - **Element interaction**: Wait for elements, get text content, and interact with forms
 - **Screenshot capabilities**: Capture full pages or viewport screenshots
 - **Type-safe**: Built with TypeScript and runtime validation using Zod
+![image](https://github.com/user-attachments/assets/1be27520-cf5e-4010-88d7-b3b262af4074)
 
 ## Installation
 
