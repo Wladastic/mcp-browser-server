@@ -8,6 +8,7 @@ src/*.js
 src/*.js.map
 
 # Screenshots from tests
+screenshots/*.png
 *.png
 
 # Log files

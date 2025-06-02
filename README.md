@@ -165,7 +165,21 @@ await analyze_screenshot({
 - `gemma3:4b` (default, good balance of speed and quality)
 - Any other vision-capable model available in your Ollama installation
 
-## Development
+## Development & Testing
+
+### Quick Setup
+
+```bash
+# One-command setup (installs dependencies, browsers, and builds)
+npm run setup
+
+# Or step by step:
+npm install
+npx playwright install
+npm run build
+```
+
+### Development Commands
 
 ```bash
 # Build the project
@@ -174,8 +188,69 @@ npm run build
 # Run in development mode
 npm run dev
 
-# Test the server
+# Start the server
 npm run start
+
+# Development helper (shows all available commands)
+npm run dev-helper help
+```
+
+### Testing
+
+The project includes comprehensive tests in the `tests/` directory:
+
+```bash
+# Run basic communication test
+npm run test
+
+# Run browser automation demo
+npm run test:demo
+
+# Run AI analysis test (requires Ollama)
+npm run test:ai-simple
+
+# Check system status
+npm run test:status
+
+# Run all tests
+npm run test:all
+```
+
+### Development Helper
+
+Use the development helper for common tasks:
+
+```bash
+# Show all available commands
+npm run dev-helper help
+
+# Quick setup from scratch
+npm run dev-helper setup
+
+# Run comprehensive tests
+npm run dev-helper test
+
+# Clean generated files
+npm run dev-helper clean
+```
+
+For more details about testing, see [tests/README.md](tests/README.md).
+
+### Project Structure
+
+```
+mcp-browser-server/
+├── src/                 # TypeScript source code
+│   └── index.ts        # Main MCP server implementation
+├── build/              # Compiled JavaScript output
+├── tests/              # Test scripts and documentation
+│   ├── README.md       # Testing documentation
+│   ├── simple-test.mjs # Basic communication test
+│   ├── demo-test.mjs   # Browser automation demo
+│   └── *.mjs          # Additional test files
+├── screenshots/        # Generated screenshots from tests
+├── package.json        # Project configuration
+└── README.md          # This file
 ```
 
 ## License

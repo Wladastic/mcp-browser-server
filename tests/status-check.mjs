@@ -119,8 +119,10 @@ try {
 // Check test files
 console.log('\n🔍 Test Files:');
 const testFiles = [
-  'simple-test.mjs',
-  'demo-test.mjs'
+  'tests/simple-test.mjs',
+  'tests/demo-test.mjs',
+  'tests/ai-analysis-test.mjs',
+  'tests/simple-ai-test.mjs'
 ];
 
 for (const file of testFiles) {
@@ -134,9 +136,9 @@ for (const file of testFiles) {
 // Check screenshots from previous runs
 console.log('\n📸 Previous Test Results:');
 const screenshots = [
-  'homepage.png',
-  'demo-page.png', 
-  'interaction-test.png'
+  'screenshots/homepage.png',
+  'screenshots/demo-page.png', 
+  'screenshots/interaction-test.png'
 ];
 
 for (const screenshot of screenshots) {
