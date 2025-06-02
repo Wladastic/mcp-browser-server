@@ -4,8 +4,8 @@ A Model Context Protocol (MCP) server that provides browser automation capabilit
 This server enables AI assistants to interact with web pages through a standardized interface.
 
 Perfect for web automation, testing, and debugging workflows with AI assistants including:
+- **[Chat.fans](https://chat.fans/) agents** - Empower AI agents with web interaction capabilities in VS Code
 - **GitHub Copilot Chat** - Enhance your development workflow with browser automation
-- **[Chat.fans](https://chat.fans/) agents** - Empower AI agents with web interaction capabilities
 - **Any MCP-compatible AI assistant** - Universal browser automation for AI tools
 
 ## Features
@@ -19,19 +19,26 @@ Perfect for web automation, testing, and debugging workflows with AI assistants 
 
 ## Installation
 
-First install the package dependencies, then build to be able to run the server from VSCode:
 ```bash
 npm install
 npm run build
 ```
 
+Make sure Playwright browsers are installed:
+```bash
+npx playwright install
+```
+
+For system dependencies (Linux):
+```bash
+sudo npx playwright install-deps
+```
+
 ## Usage
 
-### As an MCP Server
+### VS Code Integration
 
-The server is designed to be used with MCP-compatible AI assistants. Configure it in your MCP client:
-In VS Code, you can set up the MCP server in your `settings.json` or `mcp.json` file to enable browser automation capabilities.
-### MCP Configuration Example
+Configure the MCP server in VS Code by adding to your `settings.json` or workspace configuration:
 
 ```json
 "mcp": {
@@ -44,8 +51,16 @@ In VS Code, you can set up the MCP server in your `settings.json` or `mcp.json` 
         "env": {}
       }
     }
-  },
+  }
 ```
+
+Once configured, Chat.fans agents and GitHub Copilot Chat can use browser automation tools for web testing, scraping, and automation tasks.
+
+#### Available VS Code Tasks
+
+- **Build**: `Ctrl+Shift+P` → "Tasks: Run Task" → "build"
+- **Development Mode**: `Ctrl+Shift+P` → "Tasks: Run Task" → "dev"  
+- **Test MCP Server**: `Ctrl+Shift+P` → "Tasks: Run Task" → "test-mcp-server"
 
 ### Available Tools
 
@@ -95,27 +110,6 @@ npm run dev
 # Test the server
 npm run start
 ```
-
-## Browser Dependencies
-
-Make sure Playwright browsers are installed:
-
-```bash
-npx playwright install
-```
-
-For system dependencies (Linux):
-```bash
-sudo npx playwright install-deps
-```
-
-## VS Code Integration
-
-This project includes VS Code configuration files:
-
-- `.vscode/tasks.json` - Build and test tasks
-- `.vscode/mcp.json` - MCP server configuration
-- `copilot-instructions.md` - Development guidelines
 
 ## License
 
