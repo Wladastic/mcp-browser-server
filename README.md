@@ -19,6 +19,7 @@ Perfect for web automation, testing, and debugging workflows with AI assistants 
 
 ## Installation
 
+First install the package dependencies, then build to be able to run the server from VSCode:
 ```bash
 npm install
 npm run build
@@ -29,17 +30,21 @@ npm run build
 ### As an MCP Server
 
 The server is designed to be used with MCP-compatible AI assistants. Configure it in your MCP client:
+In VS Code, you can set up the MCP server in your `settings.json` or `mcp.json` file to enable browser automation capabilities.
+### MCP Configuration Example
 
 ```json
-{
-  "mcpServers": {
-    "browser-automation": {
-      "command": "node",
-      "args": ["/path/to/mcp-browser-server/build/index.js"],
-      "env": {}
+"mcp": {
+    "servers": {
+      "browser-automation": {
+        "command": "node",
+        "args": [
+          "/home/yourUserName/mcp-browser-server/build/index.js"
+        ],
+        "env": {}
+      }
     }
-  }
-}
+  },
 ```
 
 ### Available Tools
