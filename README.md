@@ -77,6 +77,8 @@ Once configured, Chat.fans agents and GitHub Copilot Chat can use browser automa
 10. **analyze_screenshot** - AI-powered screenshot analysis using Gemma3 (requires Ollama)
 11. **get_page_info** - Get current page information
 12. **close_browser** - Close the browser instance
+13. **scroll** - Scroll the page in the specified direction (up/down/left/right)
+14. **check_scrollability** - Check if the page is scrollable in specific directions
 
 ## Example: Web Application Testing
 
@@ -105,7 +107,64 @@ await screenshot({ fullPage: true, path: "dashboard.png" });
 
 // Get all console logs for debugging
 await get_console_logs();
+
+// Scroll down to see more content
+await scroll({ direction: "down", pixels: 500, behavior: "smooth" });
+
+// Check if page can be scrolled vertically
+await check_scrollability({ direction: "vertical" });
+
+// Scroll back to top
+await scroll({ direction: "up", pixels: 500 });
 ```
+
+## Page Scrolling and Navigation
+
+The MCP Browser Server includes comprehensive scrolling tools for navigating long pages and checking scroll capabilities:
+
+### Scroll Tool
+
+The `scroll` tool allows you to scroll the page in any direction with fine-grained control:
+
+```javascript
+// Scroll down by default amount (100px)
+await scroll();
+
+// Scroll in specific directions with custom distances
+await scroll({ direction: "down", pixels: 300, behavior: "smooth" });
+await scroll({ direction: "up", pixels: 200, behavior: "auto" });
+await scroll({ direction: "left", pixels: 150 });
+await scroll({ direction: "right", pixels: 150 });
+
+// Smooth scrolling for better user experience
+await scroll({ direction: "down", pixels: 500, behavior: "smooth" });
+```
+
+**Parameters:**
+- `direction`: `"up"`, `"down"`, `"left"`, `"right"` (default: `"down"`)
+- `pixels`: Number of pixels to scroll (default: 100)
+- `behavior`: `"auto"` or `"smooth"` (default: `"auto"`)
+
+### Scrollability Check Tool
+
+The `check_scrollability` tool determines whether a page can be scrolled in specific directions:
+
+```javascript
+// Check both vertical and horizontal scrollability
+await check_scrollability({ direction: "both" });
+
+// Check only vertical scrolling
+await check_scrollability({ direction: "vertical" });
+
+// Check only horizontal scrolling  
+await check_scrollability({ direction: "horizontal" });
+```
+
+**Response includes:**
+- Current scroll position
+- Maximum scroll distance
+- Whether scrolling is possible in each direction
+- Detailed position information
 
 ## AI-Powered Screenshot Analysis
 

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Browser Server - Scroll Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            min-height: 300px;
+        }
+        h1, h2 {
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .scroll-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .wide-content {
+            width: 150%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator" id="scrollInfo">
+        Scroll: 0px
+    </div>
+
+    <div class="container">
+        <h1>🚀 MCP Browser Server - Scroll Test Page</h1>
+        <p>This page is designed to test the scroll functionality of the MCP Browser Server. It contains enough content to make the page scrollable both vertically and horizontally.</p>
+
+        <div class="section">
+            <h2>📖 Section 1: Introduction</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div class="wide-content">
+                This content extends beyond the normal width to test horizontal scrolling capabilities of the MCP Browser Server. The scroll tool should be able to handle both vertical and horizontal scrolling directions.
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Section 2: Browser Automation</h2>
+            <p>Browser automation is a powerful technique for testing web applications, scraping data, and automating repetitive tasks. The MCP Browser Server provides a standardized interface for AI assistants to interact with web browsers.</p>
+            <p>With tools like scroll and check_scrollability, AI assistants can now navigate through long pages, analyze content that requires scrolling to see, and understand the full scope of web applications.</p>
+            <p>This is particularly useful for:</p>
+            <ul>
+                <li>Testing responsive designs across different viewport sizes</li>
+                <li>Analyzing long-form content and documentation</li>
+                <li>Navigating through single-page applications with infinite scroll</li>
+                <li>Taking full-page screenshots of complex layouts</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>📊 Section 3: Scroll Functionality</h2>
+            <p>The scroll tool supports four directions:</p>
+            <ul>
+                <li><strong>Up:</strong> Scroll towards the top of the page</li>
+                <li><strong>Down:</strong> Scroll towards the bottom of the page</li>
+                <li><strong>Left:</strong> Scroll towards the left (for wide content)</li>
+                <li><strong>Right:</strong> Scroll towards the right (for wide content)</li>
+            </ul>
+            <p>You can also specify the number of pixels to scroll and choose between 'auto' and 'smooth' scrolling behavior.</p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Section 4: Scrollability Detection</h2>
+            <p>The check_scrollability tool can detect whether a page is scrollable in different directions:</p>
+            <ul>
+                <li><strong>Vertical:</strong> Check if the page can be scrolled up or down</li>
+                <li><strong>Horizontal:</strong> Check if the page can be scrolled left or right</li>
+                <li><strong>Both:</strong> Check both directions simultaneously</li>
+            </ul>
+            <p>This is useful for AI assistants to understand the layout and navigation possibilities of a web page before attempting to scroll.</p>
+        </div>
+
+        <div class="section">
+            <h2>✨ Section 5: Advanced Features</h2>
+            <p>The MCP Browser Server now includes 14 comprehensive tools for browser automation:</p>
+            <ol>
+                <li>launch_browser - Start browser instances</li>
+                <li>navigate - Go to URLs</li>
+                <li>click_element - Interact with page elements</li>
+                <li>type_text - Enter text into forms</li>
+                <li>screenshot - Capture page images</li>
+                <li>get_element_text - Extract text content</li>
+                <li>wait_for_element - Wait for elements to appear</li>
+                <li>evaluate_javascript - Execute custom scripts</li>
+                <li>get_console_logs - Monitor browser console</li>
+                <li>analyze_screenshot - AI-powered image analysis</li>
+                <li>get_page_info - Get page metadata</li>
+                <li>close_browser - Clean up browser instances</li>
+                <li><strong>scroll - Navigate through page content</strong></li>
+                <li><strong>check_scrollability - Detect scroll capabilities</strong></li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>🏁 Section 6: Conclusion</h2>
+            <p>This test page demonstrates the scrolling capabilities of the MCP Browser Server. When you run the scroll test, you should see the page scroll in different directions and the scrollability detection should report that this page is indeed scrollable.</p>
+            <p>The scroll functionality enhances the browser automation capabilities and makes it possible for AI assistants to fully explore and interact with complex web applications.</p>
+            <p style="margin-top: 100px; padding: 50px; background: rgba(255,255,255,0.1); border-radius: 10px; text-align: center;">
+                🎉 You've reached the end of the test page! 🎉<br>
+                The scroll functionality is working correctly.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Update scroll position indicator
+        function updateScrollInfo() {
+            const scrollInfo = document.getElementById('scrollInfo');
+            scrollInfo.textContent = `Scroll: ${window.scrollY}px (${window.scrollX}px)`;
+        }
+
+        window.addEventListener('scroll', updateScrollInfo);
+        updateScrollInfo();
+    </script>
+</body>
+</html>

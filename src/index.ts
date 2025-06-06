@@ -5,12 +5,10 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-  ToolSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { chromium, firefox, webkit, Browser, Page, BrowserContext } from 'playwright';
 import { z } from 'zod';
 import { Ollama } from 'ollama';
-import * as fs from 'fs';
 
 // Define our tool schemas using Zod
 const LaunchBrowserSchema = z.object({
@@ -71,6 +69,16 @@ const AnalyzeScreenshotSchema = z.object({
   detailed: z.boolean().default(false)
 });
 
+const ScrollSchema = z.object({
+  direction: z.enum(['up', 'down', 'left', 'right']).default('down'),
+  pixels: z.number().optional(),
+  behavior: z.enum(['auto', 'smooth']).default('auto')
+});
+
+const CheckScrollabilitySchema = z.object({
+  direction: z.enum(['vertical', 'horizontal', 'both']).default('both')
+});
+
 // Global browser state
 let currentBrowser: Browser | null = null;
 let currentContext: BrowserContext | null = null;
@@ -80,7 +88,7 @@ let currentPage: Page | null = null;
 let consoleLogs: Array<{level: string, message: string, timestamp: Date}> = [];
 
 class BrowserAutomationServer {
-  private server: Server;
+  private readonly server: Server;
 
   constructor() {
     this.server = new Server(
@@ -347,6 +355,46 @@ class BrowserAutomationServer {
                   type: 'boolean',
                   default: false,
                   description: 'Provide detailed structural analysis of the page'
+                }
+              }
+            }
+          },
+          {
+            name: 'scroll',
+            description: 'Scroll the page in the specified direction',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                direction: {
+                  type: 'string',
+                  enum: ['up', 'down', 'left', 'right'],
+                  default: 'down',
+                  description: 'Direction to scroll'
+                },
+                pixels: {
+                  type: 'number',
+                  description: 'Number of pixels to scroll (optional)'
+                },
+                behavior: {
+                  type: 'string',
+                  enum: ['auto', 'smooth'],
+                  default: 'auto',
+                  description: 'Scrolling behavior'
+                }
+              }
+            }
+          },
+          {
+            name: 'check_scrollability',
+            description: 'Check if the page is scrollable in the specified direction',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                direction: {
+                  type: 'string',
+                  enum: ['vertical', 'horizontal', 'both'],
+                  default: 'both',
+                  description: 'Direction to check for scrollability'
                 }
               }
             }
@@ -708,6 +756,153 @@ And start Ollama with: ollama serve`
                 ]
               };
             }
+          }
+
+          case 'scroll': {
+            if (!currentPage) {
+              throw new Error('No browser page available. Launch a browser first.');
+            }
+
+            const params = ScrollSchema.parse(args);
+            const { direction, pixels, behavior } = params;
+
+            // Determine scroll distance
+            const scrollDistance = pixels !== undefined ? pixels : 100;
+
+            // Scroll the page
+            await currentPage.evaluate(({ direction, scrollDistance, behavior }) => {
+              let newX = window.scrollX;
+              let newY = window.scrollY;
+              
+              switch (direction) {
+                case 'down':
+                  newY += scrollDistance;
+                  break;
+                case 'up':
+                  newY -= scrollDistance;
+                  break;
+                case 'right':
+                  newX += scrollDistance;
+                  break;
+                case 'left':
+                  newX -= scrollDistance;
+                  break;
+              }
+              
+              window.scrollTo({
+                top: newY,
+                left: newX,
+                behavior: behavior
+              });
+            }, { direction, scrollDistance, behavior });
+
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `Scrolled ${direction} by ${scrollDistance} pixels`
+                }
+              ]
+            };
+          }
+
+          case 'check_scrollability': {
+            if (!currentPage) {
+              throw new Error('No browser page available. Launch a browser first.');
+            }
+
+            const params = CheckScrollabilitySchema.parse(args);
+            const { direction } = params;
+
+            // Check scrollability with proper typing
+            const scrollInfo = await currentPage.evaluate((dir) => {
+              const documentHeight = Math.max(
+                document.body.scrollHeight,
+                document.body.offsetHeight,
+                document.documentElement.clientHeight,
+                document.documentElement.scrollHeight,
+                document.documentElement.offsetHeight
+              );
+              
+              const documentWidth = Math.max(
+                document.body.scrollWidth,
+                document.body.offsetWidth,
+                document.documentElement.clientWidth,
+                document.documentElement.scrollWidth,
+                document.documentElement.offsetWidth
+              );
+              
+              const viewportHeight = window.innerHeight;
+              const viewportWidth = window.innerWidth;
+              
+              const verticalScrollable = documentHeight > viewportHeight;
+              const horizontalScrollable = documentWidth > viewportWidth;
+              
+              const currentScrollY = window.scrollY;
+              const currentScrollX = window.scrollX;
+              const maxScrollY = Math.max(0, documentHeight - viewportHeight);
+              const maxScrollX = Math.max(0, documentWidth - viewportWidth);
+              
+              const verticalInfo = {
+                scrollable: verticalScrollable,
+                currentPosition: currentScrollY,
+                maxScroll: maxScrollY,
+                canScrollDown: currentScrollY < maxScrollY,
+                canScrollUp: currentScrollY > 0
+              };
+              
+              const horizontalInfo = {
+                scrollable: horizontalScrollable,
+                currentPosition: currentScrollX,
+                maxScroll: maxScrollX,
+                canScrollRight: currentScrollX < maxScrollX,
+                canScrollLeft: currentScrollX > 0
+              };
+              
+              return {
+                direction: dir,
+                vertical: verticalInfo,
+                horizontal: horizontalInfo,
+                anyScrollable: verticalScrollable || horizontalScrollable
+              };
+            }, direction);
+
+            // Format the response message based on direction
+            let message = '';
+            
+            if (direction === 'both') {
+              const v = scrollInfo.vertical;
+              const h = scrollInfo.horizontal;
+              message = `Page scrollability status:
+Vertical: ${v.scrollable ? 'Scrollable' : 'Not scrollable'}${v.scrollable ? ` (${v.currentPosition}/${v.maxScroll})` : ''}
+Horizontal: ${h.scrollable ? 'Scrollable' : 'Not scrollable'}${h.scrollable ? ` (${h.currentPosition}/${h.maxScroll})` : ''}
+Overall: ${scrollInfo.anyScrollable ? 'Page is scrollable' : 'Page is not scrollable'}`;
+            } else if (direction === 'vertical') {
+              const v = scrollInfo.vertical;
+              message = `Vertical scrolling: ${v.scrollable ? 'Available' : 'Not available'}`;
+              if (v.scrollable) {
+                message += `\nPosition: ${v.currentPosition}/${v.maxScroll}`;
+                message += `\nCan scroll up: ${v.canScrollUp}`;
+                message += `\nCan scroll down: ${v.canScrollDown}`;
+              }
+            } else {
+              const h = scrollInfo.horizontal;
+              message = `Horizontal scrolling: ${h.scrollable ? 'Available' : 'Not available'}`;
+              if (h.scrollable) {
+                message += `\nPosition: ${h.currentPosition}/${h.maxScroll}`;
+                message += `\nCan scroll left: ${h.canScrollLeft}`;
+                message += `\nCan scroll right: ${h.canScrollRight}`;
+              }
+            }
+
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: message
+                }
+              ]
+            };
           }
 
           default:

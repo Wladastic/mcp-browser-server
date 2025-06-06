@@ -16,6 +16,17 @@ This directory contains various test scripts to validate the functionality of th
   - Screenshots, navigation, form interaction
   - Responsive design testing
 
+- **`scroll-test.mjs`** - Basic page scrolling functionality test
+  - Tests scroll tool with different directions and parameters
+  - Tests scrollability detection for vertical/horizontal scrolling
+  - Validates smooth and auto scrolling behaviors
+
+- **`scroll-test-enhanced.mjs`** - Comprehensive scroll testing with guaranteed scrollable content
+  - Tests with local HTML test page designed for scrolling
+  - Tests all four scroll directions (up/down/left/right)
+  - Tests with real-world website (Wikipedia)
+  - Validates custom pixel amounts and behaviors
+
 ### AI Analysis Tests
 - **`ai-analysis-test.mjs`** - Full AI analysis testing suite
   - Tests AI-powered screenshot analysis
@@ -38,6 +49,8 @@ This directory contains various test scripts to validate the functionality of th
 # Run individual tests
 npm run test           # Basic communication test
 npm run test:demo      # Browser automation demo
+npm run test:scroll    # Basic page scrolling test
+npm run test:scroll-enhanced # Enhanced scroll test with guaranteed scrollable content
 npm run test:ai-simple # Quick AI test
 npm run test:status    # System status check
 
