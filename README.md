@@ -1,4 +1,4 @@
-# MCP Browser Server
+# AutoProbeMCP - a browser for your Agent
 
 A Model Context Protocol (MCP) server that provides browser automation capabilities using Playwright.
 This server enables AI assistants to interact with web pages through a standardized interface.
