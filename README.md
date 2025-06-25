@@ -8,6 +8,10 @@ Perfect for web automation, testing, and debugging workflows with AI assistants 
 - **GitHub Copilot Chat** - Enhance your development workflow with browser automation
 - **Any MCP-compatible AI assistant** - Universal browser automation for AI tools
 
+<a href="https://glama.ai/mcp/servers/@Wladastic/AutoProbeMCP">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@Wladastic/AutoProbeMCP/badge" alt="AutoProbeMCP MCP server" />
+</a>
+
 ## Features
 
 - **Multi-browser support**: Chromium, Firefox, and WebKit
